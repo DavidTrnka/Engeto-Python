@@ -1,0 +1,30 @@
+import yfinance as yf
+
+def fundamentalni_analyza(symbol):
+    try:
+        data = yf.Ticker(symbol)
+        cena = data.history(period='1d')['Close'].iloc[-1]
+        zisk_na_akcii = data.info['trailingEps']  # Zisk na akcii (EPS)
+        cena_zisk_ratio = cena / zisk_na_akcii  # P/E poměr
+        dluh = data.info['totalDebt']  # Celkový dluh
+        trzby = data.info['totalRevenue']  # Celkové tržby
+        
+        print(f"Aktuální cena akcie společnosti {symbol}: {cena}")
+        
+        if cena_zisk_ratio < 15:  # P/E poměr pod 15 se obvykle považuje za nízký
+            print(f"Předpokládaná cena z analýzy (nízký P/E poměr): {zisk_na_akcii * 15}")
+        elif cena_zisk_ratio > 25:  # P/E poměr nad 25 může naznačovat nadhodnocení
+            print(f"Předpokládaná cena z analýzy (vysoký P/E poměr): {zisk_na_akcii * 25}")
+        else:
+            print("Předpokládaná cena z analýzy: Cena není určena z důvodu rozumného P/E poměru.")
+        
+        if dluh / trzby < 0.5:  # Dluhový poměr pod 0.5 se obvykle považuje za nízký
+            print(f"Dluhový poměr: {dluh / trzby}")
+        else:
+            print("Dluhový poměr: Vysoký dluhový poměr, což může být rizikové.")
+    except:
+        print("Nepodařilo se provést fundamentální analýzu.")
+
+if __name__ == "__main__":
+    symbol = input("Zadejte symbol akcie společnosti: ")
+    fundamentalni_analyza(symbol)
